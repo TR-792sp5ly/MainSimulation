@@ -196,6 +196,7 @@ for (c in c_range){
 # First Failures
 ## Elliott model
 ```{r}
+# Test for file
 x <- seq(1/3,20,1/3)
 alpha <- 1
 a1 <- AvFirstFailures1[1,1:60,alpha,1]*100
