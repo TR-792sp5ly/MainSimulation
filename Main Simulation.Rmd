@@ -1,48 +1,45 @@
 ---
-title: "Main Simulation"
-#output: html_notebook
+title: "Simulation of Financial Contagion"
+output: html_notebook
 ---
 
-Adapted from Elliott et al. (2014), the simulation incorporates another contagion channel by adding  the fire-sale (liquidation) effect as an additional bankruptcy cost. The detailed setup is as follows:
+The objective of the simulation is to investigate how the financial contagion depends on integration, organization diversification, portfolio diversification, and fire-sale effect with different default thresholds. Adapted from Elliott et al. (2014), the simulation incorporate another contagion channel by adding the fire-sale (liquidation) effect as an additional bankruptcy cost.
 
-1. The numbers of assets and organizations (banks) are 100 with each organization having initial wealth of 100, and each asset having initial price at 1.
-2. The integration, organization diversification and portfolio diversification (represented by c, d and e respectively) take the grid between 1 to 20.
-3. The default threshold, theta, varies from 0.8 to 0.99
-4. For every combination of parameters, simulation is performed on 100 iterations (with few exception to have better accuracy)
+The detailed setup is as follows:
+
+1. The numbers of assets and organizations (banks) are 100 with each organization having initial wealth of 100, and asset having initial price at 1.
+2. The integration, organization diversification and portfolio diversification (represented by `c`, `d` and `e` respectively) take the grid from 1 to 20 with 1/3 as an increment.
+3. The price impact parameter, `alpha`, takes six values from 0 to 1.0536 to represent different levels of price impact when assets are liquidated.
+4. The default threshold, theta, varies from 0.8 to 0.99 with 0.01 as an increment.
+5. For every combination of parameters, simulation is performed on 100 iterations (with few exception of 1000 or more iterations to have better accuracy)
+
+The main results are stored in two lists: `Elliott` and `Mixed`. Each contains five arrays: average failures (`AvFailures`), probability of first failure (`AvFirstFailures`), probability of contagion (`AvSomeFailures`), the number of contagion waves (`AvNumWave`), and the number of failed organization in the first wave (`AvFirstWaveset`). With the dimension of (9, 60, 60, 6, 20), the arrays keep the final result for each combination of parameters.
 
 
 # Setup
 ```{r}
 n <- 100
 m <- 100
-iteration <- 1000
+iteration <- 100
 
 c_range <- seq(0.1, 0.9, 0.1)
 d_range <- seq(1/3, 20, 1/3)
 e_range <- seq(1/3, 20, 1/3)
 alpha_range <- c(0, 0.1005, 0.3046, 0.5129, 0.7257, 1.0536)
-theta_range <- seq(0.8, 0.99, 0.1)
+theta_range <- seq(0.8, 0.99, 0.01)
 
 zero <- matrix(nrow=length(c_range), ncol=length(d_range))
+hero <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
 
-AvFailures1 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-AvFailures3 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
+Elliott <- list(hero, hero, hero, hero, hero)
+names(Elliott) <- c("AvFailures", "AvFirstFailures", "AvSomeFailures", "AvNumWave", "AvFirstWaveset")
 
-AvSomeFailures1 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-AvSomeFailures3 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-
-AvFirstFailures1 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-AvFirstFailures3 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-
-AvNumWave1 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-AvNumWave3 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-
-AvFirstWaveset1 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
-AvFirstWaveset3 <- array(data=zero, dim=c(length(c_range), length(d_range), length(e_range), length(alpha_range), length(theta_range)))
+Mixed <- list(hero, hero, hero, hero, hero)
+names(Mixed) <- c("AvFailures", "AvFirstFailures", "AvSomeFailures", "AvNumWave", "AvFirstWaveset")
 ```
 
 
-# Simulation
+# Main Simulation
 ```{r}
 c_counter <- 0
 for (c in c_range){
@@ -52,7 +49,11 @@ for (c in c_range){
 	for (d in d_range){
     d_counter <- d_counter + 1
     
-    alpha_counter <- 0
+    e_counter <- 0
+    for (e in e_range){
+      e_counter <- e_counter + 1
+      
+      alpha_counter <- 0
     for (alpha in alpha_range){
       alpha_counter <- alpha_counter + 1
       
@@ -100,9 +101,10 @@ for (c in c_range){
               tmp[i,] <- tmp2
              }
           }
+          D <- tmp/rowSums(tmp)*100
           
-          #First-------------------------------------------------------------------------------
-          #Elliott
+          
+          # Elliott-------------------------------------------------------------------------------
           pold <- matrix(rep(1,n),nrow=n,ncol=1)
           underlinev <- (A%*%pold)*theta
           p <- pold
@@ -128,11 +130,10 @@ for (c in c_range){
           FirstWaveset1 <- FirstWaveset1 + length(wset)
           TotFailures1 <- TotFailures1 + numberOfFailures1
 
-          #Third-------------------------------------------------------------------------------
+          # Mixed-------------------------------------------------------------------------------
           
           p <- rep(1, n)
           v <- rep(100, m)
-          D <- tmp/rowSums(tmp)*100
           
           total_assets <- colSums(D)
           for (i in 1:m){
@@ -143,9 +144,10 @@ for (c in c_range){
           
           underlinev <- (A%*%D%*%p)*theta
           
-          #single conditional asset shock
-          seeds <- subset((total_assets>0)*1:100, (total_assets>0)*1:100!=0) #pick out nonzero
+          # Single random asset shock (It's guaranteed to hit the one held by at least one organization)
+          seeds <- subset((total_assets>0)*1:100, (total_assets>0)*1:100!=0)
           seed <- sample(seeds,1)
+          
           p[seed] <- 0
           v <- A%*%D%*%p
           wset <- seq(1,100)[c((v<=underlinev)*1)==1]
@@ -168,35 +170,43 @@ for (c in c_range){
 
          }
        
-          numberOfFailures3 <- sum(v <= underlinev)
-          
-          FirstFailures3 <- FirstFailures3 + (fcount >= 1)*1
-          SomeFailures3 <- SomeFailures3 + (fcount >= 2)*1
-          NumWave3 <- NumWave3 + fcount
-          FirstWaveset3 <- FirstWaveset3 + length(wset) # the number of failures because of first shock
-          TotFailures3 <- TotFailures3 + numberOfFailures3
-          
-      
+         numberOfFailures3 <- sum(v <= underlinev)
+         FirstFailures3 <- FirstFailures3 + (fcount >= 1)*1
+         SomeFailures3 <- SomeFailures3 + (fcount >= 2)*1
+         NumWave3 <- NumWave3 + fcount
+         FirstWaveset3 <- FirstWaveset3 + length(wset)
+         TotFailures3 <- TotFailures3 + numberOfFailures3
+
         }
         
         print(c)
         print(d)
+        print(e)
         print(alpha)
         print(theta)
         
-        AvFirstFailures1[c_counter, d_counter, alpha_counter, theta_counter] <- FirstFailures1/iteration
-        AvSomeFailures1[c_counter, d_counter, alpha_counter, theta_counter] <- SomeFailures1/iteration
-        AvNumWave1[c_counter, d_counter, alpha_counter, theta_counter] <- NumWave1/iteration
-        AvFirstWaveset1[c_counter, d_counter, alpha_counter, theta_counter] <- FirstWaveset1/iteration
-        AvFailures1[c_counter, d_counter, alpha_counter, theta_counter] <- TotFailures1/iteration
+        Elliott$AvFirstFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- FirstFailures1/iteration
+        Elliott$AvSomeFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- SomeFailures1/iteration
+        Elliott$AvNumWave[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- NumWave1/iteration
+        Elliott$AvFirstWaveset[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- FirstWaveset1/iteration
+        Elliott$AvFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- TotFailures1/iteration
         
-        AvFirstFailures3[c_counter, d_counter, alpha_counter, theta_counter] <- FirstFailures3/iteration
-        AvSomeFailures3[c_counter, d_counter, alpha_counter, theta_counter] <- SomeFailures3/iteration
-        AvNumWave3[c_counter, d_counter, alpha_counter, theta_counter] <- NumWave3/iteration
-        AvFirstWaveset3[c_counter, d_counter, alpha_counter, theta_counter] <- FirstWaveset3/iteration
-        AvFailures3[c_counter, d_counter, alpha_counter, theta_counter] <- TotFailures3/iteration
+        Mixed$AvFirstFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- FirstFailures3/iteration
+        Mixed$AvSomeFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- SomeFailures3/iteration
+        Mixed$AvNumWave[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- NumWave3/iteration
+        Mixed$AvFirstWaveset[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- FirstWaveset3/iteration
+        Mixed$AvFailures[c_counter, d_counter, e_counter, alpha_counter, theta_counter] <- TotFailures3/iteration
+        
+        }
       }
     }
   }
 }
+
+rm(tmp, tmp2)
+rm(U, t, G, colSumG, L, C, hatC)
+rm(Dnew, D, pold, p, pnew, total_assets,liquidation, port, seed, seeds)
+rm(theta, theta_range, theta_counter, alpha, alpha_range, alpha_counter)
+rm(e, e_range, e_counter, d, d_range, d_counter)
+rm(fcount, zero, hero, iter, iteration)
 ```
