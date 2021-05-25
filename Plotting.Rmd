@@ -1,0 +1,330 @@
+---
+title: "Plotting"
+#output: html_notebook
+---
+
+# 01 First Failures
+## Elliott model
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- AvFirstFailures1[1,1:60,alpha,1]*100
+a2 <- AvFirstFailures1[2,1:60,alpha,1]*100
+a3 <- AvFirstFailures1[3,1:60,alpha,1]*100
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Occurrence of First Failure', colour='integration')
+g
+```
+
+## Mixed model
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- AvFirstFailures3[1,1:60,alpha,1]*100
+a2 <- AvFirstFailures3[2,1:60,alpha,1]*100
+a3 <- AvFirstFailures3[3,1:60,alpha,1]*100
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Occurrence of First Failure', colour='Integration')
+g
+```
+
+
+# 02 Probability of contagion
+## Elliott model
+```{r}
+# Add some notes here and there
+x <- seq(1/3,20,1/3)
+a1 <- AvSomeFailures1[1,1:60,1,1]*100
+a2 <- AvSomeFailures1[2,1:60,1,1]*100
+a3 <- AvSomeFailures1[3,1:60,1,1]*100
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Probability of Contagion', colour='integration')
+g
+```
+
+#### Conditional Probability of contagion
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- 100*AvSomeFailures1[1,1:60,alpha,1]/AvFirstFailures1[1,1:60,alpha,1]
+a2 <- 100*AvSomeFailures1[2,1:60,alpha,1]/AvFirstFailures1[2,1:60,alpha,1]
+a3 <- 100*AvSomeFailures1[3,1:60,alpha,1]/AvFirstFailures1[3,1:60,alpha,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Conditional Probability of Contagion', colour='Integration')
+g
+```
+
+
+## Mixed model
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- AvSomeFailures3[1,1:60,alpha,1]*100
+a2 <- AvSomeFailures3[2,1:60,alpha,1]*100
+a3 <- AvSomeFailures3[3,1:60,alpha,1]*100
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=17)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Probability of Contagion', colour='Integration')
+g
+```
+
+
+#### Conditional Probability of contagion
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- 100*AvSomeFailures3[1,1:60,alpha,1]/AvFirstFailures3[1,1:60,alpha,1]
+a2 <- 100*AvSomeFailures3[2,1:60,alpha,1]/AvFirstFailures3[2,1:60,alpha,1]
+a3 <- 100*AvSomeFailures3[3,1:60,alpha,1]/AvFirstFailures3[3,1:60,alpha,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Probability of Contagion', colour='Integration')
+g
+```
+
+### From alpha=0 to alpha=1.0536
+```{r}
+x <- seq(1/3,20,1/3)
+integration <- 3
+a1 <- AvSomeFailures3[integration,1:60,1,1]*100
+a2 <- AvSomeFailures3[integration,1:60,2,1]*100
+a3 <- AvSomeFailures3[integration,1:60,3,1]*100
+a4 <- AvSomeFailures3[integration,1:60,4,1]*100
+a5 <- AvSomeFailures3[integration,1:60,5,1]*100
+a6 <- AvSomeFailures3[integration,1:60,6,1]*100
+
+data <- data.frame(a1, a2, a3, a4, a5, a6)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="0")) + geom_point(aes(y=a1, colour="0"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='0.1005')) + geom_point(aes(y=a2, colour="0.1005"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='0.3046')) + geom_point(aes(y=a3, colour="0.3046"), size=1.5, shape=17)
+g <- g + geom_line(aes(y=a4, colour="0.5129")) + geom_point(aes(y=a4, colour="0.5129"), size=1.5, shape=18)
+g <- g + geom_line(aes(y=a5, colour='0.7257')) + geom_point(aes(y=a5, colour="0.7257"), size=1.5, shape=19)
+g <- g + geom_line(aes(y=a6, colour='1.0536')) + geom_point(aes(y=a6, colour="1.0536"), size=1.5, shape=20)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Probability of Contagion', colour='alpha')
+g
+```
+
+
+# 03 Average failures
+## Elliott model
+```{r}
+x <- seq(1/3,20,1/3)
+a1 <- AvFailures1[1,1:60,1,1]
+a2 <- AvFailures1[2,1:60,1,1]
+a3 <- AvFailures1[3,1:60,1,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Peccentage of Defaults', colour='integration')
+g
+```
+
+### Conditional failures
+```{r}
+x <- seq(1/3,20,1/3)
+
+a1 <- (as.numeric(AvFailures1[1,1:60,1,1]) - (1 - AvSomeFailures1[1,1:60,1,1])*AvNumWave1[1,1:60,1,1]*AvFirstFailures1[1,1:60,1,1])/AvSomeFailures1[1,1:60,1,1]
+
+a1[is.nan(a1)] <- 0
+a1[a1<0] <- 0
+
+a2 <- (as.numeric(AvFailures1[2,1:60,1,1]) - (1 - AvSomeFailures1[2,1:60,1,1])*AvNumWave1[2,1:60,1,1]*AvFirstFailures1[2,1:60,1,1])/AvSomeFailures1[2,1:60,1,1]
+a2[is.nan(a2)] <- 0
+a2[a2<0] <- 0
+
+a3 <- (as.numeric(AvFailures1[3,1:60,1,1]) - (1 - AvSomeFailures1[3,1:60,1,1])*AvNumWave1[3,1:60,1,1]*AvFirstFailures1[3,1:60,1,1])/AvSomeFailures1[3,1:60,1,1]
+a3[is.nan(a3)] <- 0
+a3[a3<0] <- 0
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Conditional Failures (%)', colour = "Integration")
+g
+```
+
+## Mixed model
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 6
+a1 <- AvFailures3[1,1:60,alpha,1]
+a2 <- AvFailures3[2,1:60,alpha,1]
+a3 <- AvFailures3[3,1:60,alpha,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=16)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Percentage of Defaults', colour='integration')
+g <- g + theme(legend.position = "none", axis.text.x = element_text(size = 12), axis.title.x = element_text(size=15), axis.text.y = element_text(size = 12), axis.title.y = element_text(size=15))
+g
+```
+
+### Conditional failures(1)
+```{r}
+x <- seq(1/3,20,1/3)
+
+alpha <- 6
+
+a1 <- (as.numeric(AvFailures3[1,1:60,alpha,1]) - (AvFirstWaveset3[1,1:60,alpha,1]/AvFirstFailures3[1,1:60,alpha,1])*(AvFirstFailures3[1,1:60,alpha,1]-AvSomeFailures3[1,1:60,alpha,1]))/AvSomeFailures3[1,1:60,alpha,1]
+#a1[is.nan(a1)] <- 0
+#a1[is.infinite(a1)] <- 0
+#a1[a1<0] <- 0
+
+a2 <- (as.numeric(AvFailures3[2,1:60,alpha,1]) - (AvFirstWaveset3[2,1:60,alpha,1]/AvFirstFailures3[2,1:60,alpha,1])*(AvFirstFailures3[2,1:60,alpha,1]-AvSomeFailures3[2,1:60,alpha,1]))/AvSomeFailures3[2,1:60,alpha,1]
+#a2[is.nan(a2)] <- 0
+#a2[is.infinite(a2)] <- 0
+#a2[a2<0] <- 0
+
+a3 <- (as.numeric(AvFailures3[3,1:60,alpha,1]) - (AvFirstWaveset3[3,1:60,alpha,1]/AvFirstFailures3[3,1:60,alpha,1])*(AvFirstFailures3[3,1:60,alpha,1]-AvSomeFailures3[3,1:60,alpha,1]))/AvSomeFailures3[3,1:60,alpha,1]
+#a3[is.infinite(a3)] <- NaN
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=17)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Conditional Failures (%)', colour = "Integration")
+g <- g + theme(legend.position = "none", axis.text.x = element_text(size = 12), axis.title.x = element_text(size=15), axis.text.y = element_text(size = 12), axis.title.y = element_text(size=15))
+g
+```
+
+### Conditional Failures(2)
+```{r}
+x <- seq(1/3,20,1/3)
+
+alpha <- 6
+
+a1 <- (as.numeric(AvFailures3[1,1:60,alpha,1]) - AvFirstWaveset3[1,1:60,alpha,1]*(AvFirstFailures3[1,1:60,alpha,1]-AvSomeFailures3[1,1:60,alpha,1]))/(AvSomeFailures3[1,1:60,alpha,1]/AvFirstFailures3[1,1:60,alpha,1])
+a1[is.nan(a1)] <- 0
+a1[is.infinite(a1)] <- 0
+a1[a1<0] <- 0
+
+a2 <- (as.numeric(AvFailures3[2,1:60,alpha,1]) - AvFirstWaveset3[2,1:60,alpha,1]*(AvFirstFailures3[2,1:60,alpha,1]-AvSomeFailures3[2,1:60,alpha,1]))/(AvSomeFailures3[2,1:60,alpha,1]/AvFirstFailures3[2,1:60,alpha,1])
+a2[is.nan(a2)] <- 0
+a2[is.infinite(a2)] <- 0
+a2[a2<0] <- 0
+
+a3 <- (as.numeric(AvFailures3[3,1:60,alpha,1]) - AvFirstWaveset3[3,1:60,alpha,1]*(AvFirstFailures3[3,1:60,alpha,1]-AvSomeFailures3[3,1:60,alpha,1]))/(AvSomeFailures3[3,1:60,alpha,1]/AvFirstFailures3[3,1:60,alpha,1])
+a3[is.infinite(a3)] <- NaN
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=17)
+g <- g + ylim(0,100)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Conditional Failures (%)', colour = "Integration")
+g
+```
+
+# Waves
+## Elliott
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- AvNumWave1[1,1:60,alpha,1]
+a2 <- AvNumWave1[2,1:60,alpha,1]
+a3 <- AvNumWave1[3,1:60,alpha,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=17)
+g <- g + ylim(1,10)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Number of Contagion Waves', colour='integration')
+g
+```
+
+## Mixed
+```{r}
+x <- seq(1/3,20,1/3)
+alpha <- 1
+a1 <- AvNumWave3[1,1:60,alpha,1]
+a2 <- AvNumWave3[2,1:60,alpha,1]
+a3 <- AvNumWave3[3,1:60,alpha,1]
+
+data <- data.frame(a1, a2, a3)
+
+# Plot
+g <- ggplot(data, aes(x))
+g <- g + geom_line(aes(y=a1, colour="c=0.3")) + geom_point(aes(y=a1, colour="c=0.3"), size=1.5, shape=15)
+g <- g + geom_line(aes(y=a2, colour='c=0.5')) + geom_point(aes(y=a2, colour="c=0.5"), size=1.5, shape=16)
+g <- g + geom_line(aes(y=a3, colour='c=0.7')) + geom_point(aes(y=a3, colour="c=0.7"), size=1.5, shape=17)
+g <- g + ylim(0,10)
+g <- g + labs(x = 'Organization Diversification (d)', y = 'Number of Contagion Waves', colour='Integration')
+g
+```
